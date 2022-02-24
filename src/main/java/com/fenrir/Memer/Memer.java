@@ -2,6 +2,8 @@ package com.fenrir.Memer;
 
 import com.fenrir.Memer.command.CommandManager;
 import com.fenrir.Memer.command.commands.Ping;
+import com.fenrir.Memer.database.DatabaseService;
+import com.fenrir.Memer.exceptions.MigrationException;
 import com.fenrir.Memer.listener.DirectMessageListener;
 import com.fenrir.Memer.listener.GuildMessageListener;
 import net.dv8tion.jda.api.JDA;
@@ -14,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.LoginException;
 import java.io.IOException;
+import java.sql.SQLException;
 
 public class Memer {
     private static final Logger logger = LoggerFactory.getLogger(Memer.class);
@@ -21,14 +24,22 @@ public class Memer {
     private JDA client;
     private Settings settings;
     private CommandManager commandManager;
+    private DatabaseService databaseService;
 
     public Memer() {
         logger.info("Starting...");
         try {
             loadSettings();
             loadDefaultCommands();
+            databaseService = new DatabaseService(settings.getSqlPath());
             bootBot();
-        } catch (IOException | LoginException | InterruptedException e) {
+        } catch (
+                IOException |
+                LoginException |
+                InterruptedException |
+                MigrationException |
+                SQLException e
+        ) {
             logger.error("Stopping bot.");
             System.exit(0);
         }

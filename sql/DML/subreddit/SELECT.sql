@@ -1,0 +1,1 @@
+SELECT * FROM subreddit WHERE guild_id = ?;

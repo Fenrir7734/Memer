@@ -1,0 +1,1 @@
+SELECT * FROM guild WHERE guild_id = ?;

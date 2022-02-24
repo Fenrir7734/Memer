@@ -1,0 +1,1 @@
+DELETE FROM subreddit WHERE id = ?;
