@@ -1,0 +1,6 @@
+{
+  "token": "TOKEN",
+  "prefix": "!",
+
+  "sql_path": "sql"
+}
