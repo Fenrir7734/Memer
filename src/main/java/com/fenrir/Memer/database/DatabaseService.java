@@ -1,5 +1,13 @@
 package com.fenrir.Memer.database;
 
+import com.fenrir.Memer.database.entities.GuildDB;
+import com.fenrir.Memer.database.entities.ImgurTagDB;
+import com.fenrir.Memer.database.entities.SubredditDB;
+import com.fenrir.Memer.database.managers.GuildResourceEntityManager;
+import com.fenrir.Memer.database.services.GuildService;
+import com.fenrir.Memer.database.services.ImgurTagService;
+import com.fenrir.Memer.database.services.SubredditService;
+import com.fenrir.Memer.exceptions.DatabaseException;
 import com.fenrir.Memer.exceptions.MigrationException;
 
 import java.io.IOException;
@@ -13,10 +21,19 @@ public class DatabaseService {
     private final String sqlPath;
     private final DatabaseMigrationService databaseMigrationService;
 
-    public DatabaseService(String sqlPath) throws MigrationException, SQLException, IOException {
+    private final GuildService guildService;
+    private final SubredditService subredditService;
+    private final ImgurTagService imgurTagService;
+
+    public DatabaseService(String sqlPath) throws MigrationException, SQLException, IOException, DatabaseException {
         String DDLDirPath = Path.of(sqlPath).resolve(DDL_DIR_NAME).toString();
         this.sqlPath = sqlPath;
         this.databaseMigrationService = new DatabaseMigrationService(DDLDirPath);
         this.databaseMigrationService.migrate();
+
+        String DMLPath = Path.of(sqlPath).resolve(DML_DIR_NAME).toString();
+        this.guildService = new GuildService(DMLPath);
+        this.subredditService = new SubredditService(DMLPath);
+        this.imgurTagService = new ImgurTagService(DMLPath);
     }
 }

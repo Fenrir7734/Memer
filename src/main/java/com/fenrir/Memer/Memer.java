@@ -33,13 +33,8 @@ public class Memer {
             loadDefaultCommands();
             databaseService = new DatabaseService(settings.getSqlPath());
             bootBot();
-        } catch (
-                IOException |
-                LoginException |
-                InterruptedException |
-                MigrationException |
-                SQLException e
-        ) {
+        } catch (Exception e) {
+            e.printStackTrace();
             logger.error("Stopping bot.");
             System.exit(0);
         }
