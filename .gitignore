@@ -27,3 +27,6 @@ buildNumber.properties
 # Settings file
 settings.json
 database.properties
+
+# migrated
+sql/DDL/info/migrated.txt
