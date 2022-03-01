@@ -2,5 +2,30 @@
   "token": "TOKEN",
   "prefix": "!",
 
-  "sql_path": "sql"
+  "sql_path": "sql",
+
+  "subreddits": [
+    "memes",
+    "meme",
+    "wholesomememes",
+    "starterpacks",
+    "dankmemes",
+    "meirl",
+    "me_irl",
+    "anime_irl",
+    "MEOW_IRL",
+    "2meirl4meirl",
+    "trippinthroughtime",
+    "boottoobig",
+    "BlackPeopleTwitter",
+    "ProgrammerHumor",
+    "linuxmemes",
+    "HistoryMemes",
+    "MemeEconomy"
+  ],
+
+  "imgur_tags": [
+    "memes",
+    "funny"
+  ]
 }

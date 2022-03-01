@@ -3,11 +3,13 @@ package com.fenrir.Memer.listener;
 import com.fenrir.Memer.Memer;
 import com.fenrir.Memer.Settings;
 import com.fenrir.Memer.database.entities.GuildDB;
+import com.fenrir.Memer.database.entities.ImgurTagDB;
+import com.fenrir.Memer.database.entities.SubredditDB;
+import com.fenrir.Memer.database.managers.GuildResourceEntityManager;
 import com.fenrir.Memer.database.services.GuildService;
 import com.fenrir.Memer.exceptions.DatabaseException;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -15,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.Optional;
 
 public class GuildEventListener extends ListenerAdapter {
@@ -51,6 +54,24 @@ public class GuildEventListener extends ListenerAdapter {
             );
             logger.warn("Failed to add new guild to database on join event. Guild id: {}", guildId);
         }
+
+        GuildResourceEntityManager<SubredditDB> subredditManager = memer.getDatabaseService()
+                .getSubredditService()
+                .get(guildId);
+        List<String> subreddits = settings.getSubreddits();
+        for (String subreddit: subreddits) {
+            SubredditDB subredditDB = new SubredditDB(subreddit, guildId);
+            System.out.println(subredditManager.add(subredditDB));
+        }
+
+        GuildResourceEntityManager<ImgurTagDB> imgurManager = memer.getDatabaseService()
+                .getImgurTagService()
+                .get(guildId);
+        List<String> imgurTags = settings.getImgurTags();
+        for (String tag: imgurTags) {
+            ImgurTagDB imgurTagDB = new ImgurTagDB(tag, guildId);
+            imgurManager.add(imgurTagDB);
+        }
     }
 
     @Override
@@ -68,10 +89,5 @@ public class GuildEventListener extends ListenerAdapter {
         } finally {
             guildService.invalidate(guildId);
         }
-    }
-
-    @Override
-    public void onReady(@NotNull ReadyEvent event) {
-
     }
 }
