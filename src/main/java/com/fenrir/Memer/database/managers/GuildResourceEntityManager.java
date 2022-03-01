@@ -88,9 +88,10 @@ public class GuildResourceEntityManager<T extends GuildResourceEntity> {
     }
 
     private synchronized boolean isUniq(T entity) {
+        String newEntityName = entity.getName();
+
         for (T e: entities) {
             String existingEntityName = e.getName();
-            String newEntityName = e.getName();
 
             if (existingEntityName.equals(newEntityName)) {
                 return false;
