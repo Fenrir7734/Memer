@@ -1,6 +1,8 @@
 package com.fenrir.Memer.command;
 
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.util.Arrays;
@@ -28,6 +30,18 @@ public class CommandEvent {
 
     public String getCommandName() {
         return commandName;
+    }
+
+    public TextChannel getChannel() {
+        return event.getTextChannel();
+    }
+
+    public Member getAuthor() {
+        return event.getMember();
+    }
+
+    public Member getBot() {
+        return event.getGuild().getSelfMember();
     }
 
     public String[] getArgs() {

@@ -1,11 +1,14 @@
 package com.fenrir.Memer.command.commands;
 
 import com.fenrir.Memer.command.CommandEvent;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.util.concurrent.TimeUnit;
 
 public class Ping implements Command {
+    private final Permission[] userPermission = new Permission[] { Permission.MESSAGE_SEND };
+
     @Override
     public void execute(CommandEvent commandEvent) {
         MessageReceivedEvent event = commandEvent.getEvent();
@@ -30,5 +33,10 @@ public class Ping implements Command {
     @Override
     public String getExample() {
         return "**<prefix>**ping";
+    }
+
+    @Override
+    public Permission[] getUserPermission() {
+        return userPermission;
     }
 }
