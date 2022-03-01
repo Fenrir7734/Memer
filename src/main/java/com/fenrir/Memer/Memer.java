@@ -5,9 +5,13 @@ import com.fenrir.Memer.command.commands.Ping;
 import com.fenrir.Memer.database.DatabaseService;
 import com.fenrir.Memer.exceptions.MigrationException;
 import com.fenrir.Memer.listener.DirectMessageListener;
+import com.fenrir.Memer.listener.GuildEventListener;
 import com.fenrir.Memer.listener.GuildMessageListener;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import org.checkerframework.checker.units.qual.C;
 import org.json.JSONException;
@@ -17,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import javax.security.auth.login.LoginException;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Optional;
 
 public class Memer {
     private static final Logger logger = LoggerFactory.getLogger(Memer.class);
@@ -30,8 +35,8 @@ public class Memer {
         logger.info("Starting...");
         try {
             loadSettings();
-            loadDefaultCommands();
             databaseService = new DatabaseService(settings.getSqlPath());
+            loadDefaultCommands();
             bootBot();
         } catch (Exception e) {
             e.printStackTrace();
@@ -66,7 +71,8 @@ public class Memer {
             )
                     .addEventListeners(
                             new GuildMessageListener(this),
-                            new DirectMessageListener(this)
+                            new DirectMessageListener(this),
+                            new GuildEventListener(this)
                     )
                     .build();
             client.awaitReady();
@@ -98,6 +104,29 @@ public class Memer {
 
     public CommandManager getCommandManager() {
         return commandManager;
+    }
+
+    public DatabaseService getDatabaseService() {
+        return databaseService;
+    }
+
+    public Optional<TextChannel> findChannelWithSendingPermission(Guild guild) {
+        TextChannel channel = guild.getDefaultChannel();
+        if (channel == null || !channel.canTalk()) {
+            return guild.getTextChannels()
+                    .stream()
+                    .filter(TextChannel::canTalk)
+                    .findAny();
+        }
+        return Optional.of(channel);
+    }
+
+    public Optional<TextChannel> findChannelWithSendingPermission(MessageReceivedEvent event) {
+        TextChannel channel = event.getTextChannel();
+        if (channel.canTalk()) {
+            return Optional.of(channel);
+        }
+        return findChannelWithSendingPermission(event.getGuild());
     }
 
     public static void main(String[] args) {

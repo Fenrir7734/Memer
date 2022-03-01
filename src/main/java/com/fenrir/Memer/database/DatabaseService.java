@@ -1,9 +1,5 @@
 package com.fenrir.Memer.database;
 
-import com.fenrir.Memer.database.entities.GuildDB;
-import com.fenrir.Memer.database.entities.ImgurTagDB;
-import com.fenrir.Memer.database.entities.SubredditDB;
-import com.fenrir.Memer.database.managers.GuildResourceEntityManager;
 import com.fenrir.Memer.database.services.GuildService;
 import com.fenrir.Memer.database.services.ImgurTagService;
 import com.fenrir.Memer.database.services.SubredditService;
@@ -35,5 +31,17 @@ public class DatabaseService {
         this.guildService = new GuildService(DMLPath);
         this.subredditService = new SubredditService(DMLPath);
         this.imgurTagService = new ImgurTagService(DMLPath);
+    }
+
+    public GuildService getGuildService() {
+        return guildService;
+    }
+
+    public SubredditService getSubredditService() {
+        return subredditService;
+    }
+
+    public ImgurTagService getImgurTagService() {
+        return imgurTagService;
     }
 }
