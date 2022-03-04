@@ -1,5 +1,8 @@
 package com.fenrir.Memer.database;
 
+import com.fenrir.Memer.database.entities.ImgurTagDB;
+import com.fenrir.Memer.database.entities.SubredditDB;
+import com.fenrir.Memer.database.services.GuildResourceService;
 import com.fenrir.Memer.database.services.GuildService;
 import com.fenrir.Memer.database.services.ImgurTagService;
 import com.fenrir.Memer.database.services.SubredditService;
@@ -18,8 +21,8 @@ public class DatabaseService {
     private final DatabaseMigrationService databaseMigrationService;
 
     private final GuildService guildService;
-    private final SubredditService subredditService;
-    private final ImgurTagService imgurTagService;
+    private final GuildResourceService<SubredditDB> subredditService;
+    private final GuildResourceService<ImgurTagDB> imgurTagService;
 
     public DatabaseService(String sqlPath) throws MigrationException, SQLException, IOException, DatabaseException {
         String DDLDirPath = Path.of(sqlPath).resolve(DDL_DIR_NAME).toString();
@@ -37,11 +40,11 @@ public class DatabaseService {
         return guildService;
     }
 
-    public SubredditService getSubredditService() {
+    public GuildResourceService<SubredditDB> getSubredditService() {
         return subredditService;
     }
 
-    public ImgurTagService getImgurTagService() {
+    public GuildResourceService<ImgurTagDB> getImgurTagService() {
         return imgurTagService;
     }
 }
