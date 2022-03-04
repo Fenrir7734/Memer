@@ -1,9 +1,13 @@
 package com.fenrir.Memer;
 
+import com.fenrir.Memer.api.Imgur;
+import com.fenrir.Memer.api.Reddit;
 import com.fenrir.Memer.command.CommandManager;
+import com.fenrir.Memer.command.commands.Meme;
 import com.fenrir.Memer.command.commands.Ping;
 import com.fenrir.Memer.database.DatabaseService;
-import com.fenrir.Memer.exceptions.MigrationException;
+import com.fenrir.Memer.exceptions.BotInvalidSettingsException;
+import com.fenrir.Memer.exceptions.HttpException;
 import com.fenrir.Memer.listener.DirectMessageListener;
 import com.fenrir.Memer.listener.GuildEventListener;
 import com.fenrir.Memer.listener.GuildMessageListener;
@@ -13,14 +17,12 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.requests.GatewayIntent;
-import org.checkerframework.checker.units.qual.C;
 import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.LoginException;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Optional;
 
 public class Memer {
@@ -30,12 +32,15 @@ public class Memer {
     private Settings settings;
     private CommandManager commandManager;
     private DatabaseService databaseService;
+    private Reddit redditMediaProvider;
+    private Imgur imgurMediaProvider;
 
     public Memer() {
         logger.info("Starting...");
         try {
             loadSettings();
             databaseService = new DatabaseService(settings.getSqlPath());
+            loadMediaProviders();
             loadDefaultCommands();
             bootBot();
         } catch (Exception e) {
@@ -46,16 +51,18 @@ public class Memer {
         logger.info("The bot has been successfully build and is ready to go!");
     }
 
-    private void loadSettings() throws IOException {
+    private void loadSettings() throws IOException, BotInvalidSettingsException {
         logger.info("Trying to read settings...");
         settings = new Settings();
         try {
             settings.load();
         } catch (JSONException e) {
-            logger.error("The settings.json file is invalid");
             throw e;
         } catch (IOException e) {
-            logger.error("Failed to read settings.json file");
+            logger.error("Failed to read settings.json file.");
+            throw e;
+        } catch (BotInvalidSettingsException e) {
+            logger.error("Provided settings are invalid.");
             throw e;
         }
         logger.info("Settings loaded");
@@ -77,19 +84,37 @@ public class Memer {
                     .build();
             client.awaitReady();
         } catch (LoginException | IllegalArgumentException e) {
-            logger.error("New JDA instance could not be created. Check if provided token is valid");
+            logger.error("New JDA instance could not be created. Check if provided token is valid.");
             throw e;
         } catch (InterruptedException e) {
-            logger.error("Thread was interrupted during creating new JDA instance");
+            logger.error("Thread was interrupted during creating new JDA instance.");
             throw e;
         }
         logger.info("JDA instance build successfully!");
     }
 
+    public void loadMediaProviders() throws IOException, InterruptedException, HttpException {
+        logger.info("Loading media providers...");
+        redditMediaProvider = new Reddit(settings.getRedditRefresh());
+        try {
+            imgurMediaProvider = new Imgur(settings.getImgurClientId(), settings.getImgurRefresh());
+        } catch (IOException | InterruptedException e) {
+            logger.error("An error occurred during loading imgur media provider. {}", e.getMessage());
+            throw e;
+        } catch (HttpException e) {
+            logger.error(
+                    "An error occurred during loading imgur media provider. {}. Status code: {}",
+                    e.getMessage(), e.getStatusCode());
+            throw e;
+        }
+
+    }
+
     public void loadDefaultCommands() {
         logger.info("Loading default commands...");
         commandManager = new CommandManager(
-                new Ping()
+                new Ping(),
+                new Meme(this)
         );
         logger.info("Commands loaded.");
     }
@@ -108,6 +133,14 @@ public class Memer {
 
     public DatabaseService getDatabaseService() {
         return databaseService;
+    }
+
+    public Reddit getRedditMediaProvider() {
+        return redditMediaProvider;
+    }
+
+    public Imgur getImgurMediaProvider() {
+        return imgurMediaProvider;
     }
 
     public Optional<TextChannel> findChannelWithSendingPermission(Guild guild) {

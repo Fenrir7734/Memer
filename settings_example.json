@@ -1,8 +1,13 @@
 {
   "token": "TOKEN",
-  "prefix": "!",
+  "imgur_client_id": "CLIENT_ID",
 
+  "prefix": "!",
   "sql_path": "sql",
+
+  "reddit_refresh": 15,
+  "imgur_refresh": 180,
+  "imgur_refresh_force": false,
 
   "subreddits": [
     "memes",
@@ -23,9 +28,47 @@
     "HistoryMemes",
     "MemeEconomy"
   ],
-
   "imgur_tags": [
+    "pokemon",
+    "science_and_tech",
+    "staff_picks",
+    "gaming",
     "memes",
-    "funny"
+    "funny",
+    "awesome",
+    "aww",
+    "coffee",
+    "unmuted",
+    "dog",
+    "movies_and_tv",
+    "current_events",
+    "uplifting",
+    "comics",
+    "pizza",
+    "eat_what_you_want",
+    "creativity",
+    "rick_and_morty",
+    "cosplay",
+    "star_wars",
+    "fail",
+    "art",
+    "music",
+    "nature",
+    "the_more_you_know",
+    "diy",
+    "anime",
+    "travel",
+    "space",
+    "lego",
+    "futurama",
+    "fantasy",
+    "sports",
+    "history",
+    "tattoo",
+    "minecraft",
+    "cat",
+    "nostalgia",
+    "camping",
+    "painting"
   ]
 }
