@@ -3,8 +3,8 @@ package com.fenrir.Memer.database.managers;
 import com.fenrir.Memer.database.dao.GuildResourceDAO;
 import com.fenrir.Memer.database.entities.GuildResourceEntity;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -32,12 +32,10 @@ public class GuildResourceEntityManager<T extends GuildResourceEntity> {
         }
     }
 
-    public T getRandom() {
+    public List<T> getAll() {
         lock.readLock().lock();
         try {
-            int size = entities.size();
-            int rnd = ThreadLocalRandom.current().nextInt(size);
-            return entities.get(rnd);
+            return new ArrayList<>(entities);
         } finally {
             lock.readLock().unlock();
         }
