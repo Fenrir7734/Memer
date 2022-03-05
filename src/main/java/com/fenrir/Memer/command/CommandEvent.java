@@ -44,6 +44,10 @@ public class CommandEvent {
         return event.getGuild().getSelfMember();
     }
 
+    public long getGuildId() {
+        return event.getGuild().getIdLong();
+    }
+
     public String[] getArgs() {
         return args;
     }
