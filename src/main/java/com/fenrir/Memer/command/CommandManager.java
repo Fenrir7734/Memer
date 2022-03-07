@@ -19,4 +19,8 @@ public class CommandManager {
         Command command = defaultCommands.get(name);
         return Optional.ofNullable(command);
     }
+
+    public Map<String, Command> getCommands() {
+        return new HashMap<>(defaultCommands);
+    }
 }

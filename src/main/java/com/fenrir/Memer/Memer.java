@@ -3,6 +3,7 @@ package com.fenrir.Memer;
 import com.fenrir.Memer.api.Imgur;
 import com.fenrir.Memer.api.Reddit;
 import com.fenrir.Memer.command.CommandManager;
+import com.fenrir.Memer.command.commands.Help;
 import com.fenrir.Memer.command.commands.Meme;
 import com.fenrir.Memer.command.commands.Ping;
 import com.fenrir.Memer.database.DatabaseService;
@@ -114,7 +115,8 @@ public class Memer {
         logger.info("Loading default commands...");
         commandManager = new CommandManager(
                 new Ping(),
-                new Meme(this)
+                new Meme(this),
+                new Help(this)
         );
         logger.info("Commands loaded.");
     }
