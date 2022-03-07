@@ -101,7 +101,9 @@ public class GuildResourceEntityManager<T extends GuildResourceEntity> {
     public boolean remove(T entity) {
         lock.writeLock().lock();
         try {
-            return dao.delete(entity) && entities.remove(entity);
+            boolean result = dao.delete(entity) && entities.remove(entity);
+            refresh();
+            return result;
         } finally {
             lock.writeLock().unlock();
         }

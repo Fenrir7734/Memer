@@ -31,22 +31,23 @@ public class GuildService {
     }
 
     public boolean update(GuildDB guildDB) {
-        return dao.update(guildDB);
+        boolean result = dao.update(guildDB);
+        invalidate(guildDB.getId());
+        return result;
     }
 
     public boolean remove(GuildDB guildDB) {
         boolean result = dao.delete(guildDB);
-        if (result) {
-            guildCache.invalidate(guildDB.getId());
-        }
-
+        guildCache.invalidate(guildDB.getId());
         return result;
     }
 
     public boolean remove(long id) throws DatabaseException {
         Optional<GuildDB> guildDB = get(id);
         if (guildDB.isPresent()) {
-            return remove(guildDB.get());
+            boolean result = remove(guildDB.get());
+            invalidate(id);
+            return result;
         } else {
             throw new DatabaseException("Guild not found.");
         }
