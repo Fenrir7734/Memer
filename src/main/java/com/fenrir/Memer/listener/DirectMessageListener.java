@@ -41,20 +41,20 @@ public class DirectMessageListener extends ListenerAdapter {
         }
 
         try {
-            executor.execute(() -> handleCommand(event));
+            CommandEvent commandEvent = new CommandEvent(event);
+            executor.execute(() -> handleCommand(commandEvent));
         } catch (Exception e) {
             logger.error("An error occurred during direct command execution: {}", e.getMessage());
         }
     }
 
-    private void handleCommand(MessageReceivedEvent event) {
-        CommandEvent commandEvent = new CommandEvent(event);
+    private void handleCommand(CommandEvent commandEvent) {
         Optional<Command> commandOptional = commandManager.search(commandEvent.getCommandName());
         if (commandOptional.isPresent()) {
             Command command = commandOptional.get();
             command.execute(commandEvent);
         } else {
-            event.getChannel()
+            commandEvent.getChannel()
                     .sendMessage("I have not heard of this command.")
                     .queue();
         }
