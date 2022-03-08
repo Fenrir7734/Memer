@@ -1,6 +1,8 @@
 package com.fenrir.Memer.api;
 
+import com.fenrir.Memer.Settings;
 import com.fenrir.Memer.api.entity.ImageData;
+import com.fenrir.Memer.exceptions.BotInvalidSettingsException;
 import com.fenrir.Memer.exceptions.HttpException;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -115,7 +117,7 @@ public class Imgur implements MediaProvider<ImageData> {
     }
 
     private HttpResponse<String> makeRequest(String tag) throws IOException, InterruptedException {
-        String url = String.format("https://api.imgur.com/3/gallery/t/%s/top/day/1?showViral=false", tag);
+        String url = String.format("https://api.imgur.com/3/gallery/t/%s/viral/day/1?showViral=true", tag);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
                 .header("User-Agent", "Mozilla/5.0")
