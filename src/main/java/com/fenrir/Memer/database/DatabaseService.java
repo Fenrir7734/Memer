@@ -1,5 +1,6 @@
 package com.fenrir.Memer.database;
 
+import com.fenrir.Memer.Settings;
 import com.fenrir.Memer.database.entities.ImgurTagDB;
 import com.fenrir.Memer.database.entities.SubredditDB;
 import com.fenrir.Memer.database.services.GuildResourceService;
@@ -24,7 +25,8 @@ public class DatabaseService {
     private final GuildResourceService<SubredditDB> subredditService;
     private final GuildResourceService<ImgurTagDB> imgurTagService;
 
-    public DatabaseService(String sqlPath) throws MigrationException, SQLException, IOException, DatabaseException {
+    public DatabaseService(Settings settings) throws MigrationException, SQLException, IOException, DatabaseException {
+        String sqlPath = settings.getSqlPath();
         String DDLDirPath = Path.of(sqlPath).resolve(DDL_DIR_NAME).toString();
         this.sqlPath = sqlPath;
         this.databaseMigrationService = new DatabaseMigrationService(DDLDirPath);
@@ -32,8 +34,8 @@ public class DatabaseService {
 
         String DMLPath = Path.of(sqlPath).resolve(DML_DIR_NAME).toString();
         this.guildService = new GuildService(DMLPath);
-        this.subredditService = new SubredditService(DMLPath);
-        this.imgurTagService = new ImgurTagService(DMLPath);
+        this.subredditService = new SubredditService(DMLPath, settings.getSubredditsGuildLimit());
+        this.imgurTagService = new ImgurTagService(DMLPath, settings.getImgurTagsGuildLimit());
     }
 
     public GuildService getGuildService() {

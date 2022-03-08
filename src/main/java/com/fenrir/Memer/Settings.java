@@ -29,6 +29,9 @@ public class Settings {
     private int redditRefresh;
     private int imgurRefresh;
 
+    private int subredditsGuildLimit;
+    private int imgurTagsGuildLimit;
+
     private List<String> subreddits;
     private List<String> imgurTags;
 
@@ -45,6 +48,9 @@ public class Settings {
         redditRefresh = settingsJSONObject.getInt("reddit_refresh");
         imgurRefresh = settingsJSONObject.getInt("imgur_refresh");
         boolean imgurRefreshForce = settingsJSONObject.getBoolean("imgur_refresh_force");
+
+        subredditsGuildLimit = settingsJSONObject.getInt("guild_max_active_subreddits");
+        imgurTagsGuildLimit = settingsJSONObject.getInt("guild_max_active_imgur_tags");
 
         subreddits = parseJSONArray(settingsJSONObject.getJSONArray("subreddits"));
         imgurTags = parseJSONArray(settingsJSONObject.getJSONArray("imgur_tags"));
@@ -84,15 +90,19 @@ public class Settings {
             throws HttpException, IOException, InterruptedException, BotInvalidSettingsException {
         Imgur imgur = new Imgur(clientId, refreshTime);
         int rateLimit = imgur.getClientLimit();
-        int maxRefreshes = (int) Math.ceil(((31.0 * 24 * 60) / refreshTime) * tagsCount);
-        System.out.println(maxRefreshes);
+        int maxRefreshes = calculateMaxRefreshes(tagsCount, refreshTime);
         imgur.shutdown();
 
         if (maxRefreshes > rateLimit) {
-            logger.error("Imgur refresh time is too high. Rate limit for given Client id is {} and " +
-                    "maximum number of refreshes with given refresh time will be {}.", rateLimit, maxRefreshes);
-            throw new BotInvalidSettingsException("Imgur refresh time is too high.");
+            logger.error("Imgur refresh time is too high for given number of tags. " +
+                    "Rate limit for given Client id is {} and maximum number of refreshes " +
+                    "with given refresh time will be {}.", rateLimit, maxRefreshes);
+            throw new BotInvalidSettingsException("Imgur refresh time is too high for given number of tags.");
         }
+    }
+
+    private int calculateMaxRefreshes(int count, int refreshTime) {
+        return (int) Math.ceil(((31.0 * 24 * 60) / refreshTime) * count);
     }
 
     public String getToken() {
@@ -117,6 +127,14 @@ public class Settings {
 
     public int getImgurRefresh() {
         return imgurRefresh;
+    }
+
+    public int getSubredditsGuildLimit() {
+        return subredditsGuildLimit;
+    }
+
+    public int getImgurTagsGuildLimit() {
+        return imgurTagsGuildLimit;
     }
 
     public List<String> getSubreddits() {

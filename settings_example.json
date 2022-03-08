@@ -9,6 +9,9 @@
   "imgur_refresh": 180,
   "imgur_refresh_force": false,
 
+  "guild_max_active_subreddits": 30,
+  "guild_max_active_imgur_tags": 30,
+
   "subreddits": [
     "memes",
     "meme",

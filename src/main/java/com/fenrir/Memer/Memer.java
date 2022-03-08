@@ -40,7 +40,7 @@ public class Memer {
         logger.info("Starting...");
         try {
             loadSettings();
-            databaseService = new DatabaseService(settings.getSqlPath());
+            databaseService = new DatabaseService(settings);
             loadMediaProviders();
             loadDefaultCommands();
             bootBot();

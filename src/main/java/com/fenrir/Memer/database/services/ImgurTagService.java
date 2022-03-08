@@ -14,18 +14,20 @@ import java.util.concurrent.TimeUnit;
 
 public class ImgurTagService implements GuildResourceService<ImgurTagDB> {
     private final GuildResourceDAO<ImgurTagDB> dao;
+    private final int limit;
     private final Cache<Long, GuildResourceEntityManager<ImgurTagDB>> guildSubredditsCache = Caffeine.newBuilder()
             .expireAfterAccess(2, TimeUnit.MINUTES)
             .maximumSize(200)
             .build();
 
-    public ImgurTagService(String DMLDirPath) throws DatabaseException, SQLException, IOException {
+    public ImgurTagService(String DMLDirPath, int limit) throws DatabaseException, SQLException, IOException {
         this.dao = new ImgurTagDAO(DMLDirPath);
+        this.limit = limit;
     }
 
     @Override
     public GuildResourceEntityManager<ImgurTagDB> get(long id) {
-        return guildSubredditsCache.get(id, k -> new GuildResourceEntityManager<>(id, 30, dao));
+        return guildSubredditsCache.get(id, k -> new GuildResourceEntityManager<>(id, limit, dao));
     }
 
     @Override
