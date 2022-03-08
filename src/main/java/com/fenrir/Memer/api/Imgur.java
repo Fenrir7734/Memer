@@ -1,8 +1,6 @@
 package com.fenrir.Memer.api;
 
-import com.fenrir.Memer.Settings;
 import com.fenrir.Memer.api.entity.ImageData;
-import com.fenrir.Memer.exceptions.BotInvalidSettingsException;
 import com.fenrir.Memer.exceptions.HttpException;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
