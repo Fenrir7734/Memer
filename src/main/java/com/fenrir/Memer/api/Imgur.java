@@ -98,13 +98,14 @@ public class Imgur implements MediaProvider<ImageData> {
     }
 
     private synchronized List<ImageData> update(String source) {
-        if (remainingRateLimit <= 0) {
-            logger.warn("Could not update memes from imgur because remaining rate limit is equal {}", remainingRateLimit);
-            List<ImageData> memeList = memes.getIfPresent(source);
-            return memeList != null ? memeList : new ArrayList<>();
-        }
-
         try {
+            if (remainingRateLimit <= 0) {
+                logger.warn("Could not update memes from imgur because remaining rate limit is equal {}", remainingRateLimit);
+                remainingRateLimit = getClientRemainingRateLimit();
+                List<ImageData> memeList = memes.getIfPresent(source);
+                return memeList != null ? memeList : new ArrayList<>();
+            }
+
             HttpResponse<String> response = makeRequest(source);
             if (response.statusCode() == 200) {
                 List<ImageData> memesData = extractMemes(response.body(), source);
@@ -114,7 +115,7 @@ public class Imgur implements MediaProvider<ImageData> {
             } else {
                 logger.warn("Unsuccessful update of memes from imgur. Response status code: {}", response.statusCode());
             }
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException | InterruptedException | HttpException e) {
             logger.error("An error occurred when updating memes from imgur. Tag: {}, Error: {}", source, e.getMessage());
         }
         return new ArrayList<>();
