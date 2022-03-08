@@ -116,6 +116,7 @@ public class Memer {
         commandManager = new CommandManager(
                 new Ping(),
                 new Meme(this),
+                new com.fenrir.Memer.command.commands.Settings(this),
                 new Help(this)
         );
         logger.info("Commands loaded.");
