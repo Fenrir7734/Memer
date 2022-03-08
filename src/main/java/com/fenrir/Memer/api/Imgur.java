@@ -81,8 +81,14 @@ public class Imgur implements MediaProvider<ImageData> {
     }
 
     @Override
-    public Optional<ImageData> getMeme(String source) {
+    public Optional<ImageData> getMeme(String source, boolean allowNSFW) {
         List<ImageData> memeList = memes.get(source, this::update);
+        if (!allowNSFW) {
+            memeList = memeList.stream()
+                    .filter(v -> !v.isNFSW())
+                    .toList();
+        }
+
         if (memeList.isEmpty()) {
             return Optional.empty();
         }

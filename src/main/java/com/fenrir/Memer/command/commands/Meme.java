@@ -5,8 +5,10 @@ import com.fenrir.Memer.api.MediaProvider;
 import com.fenrir.Memer.api.entity.ImageData;
 import com.fenrir.Memer.command.CommandEvent;
 import com.fenrir.Memer.database.DatabaseService;
+import com.fenrir.Memer.database.entities.GuildDB;
 import com.fenrir.Memer.database.entities.GuildResourceEntity;
 import com.fenrir.Memer.database.services.GuildResourceService;
+import com.fenrir.Memer.exceptions.BotRuntimeException;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
@@ -22,9 +24,10 @@ public class Meme implements Command {
     private final Permission[] botPermission = new Permission[] { Permission.MESSAGE_EMBED_LINKS, Permission.MESSAGE_ATTACH_FILES };
 
     private final Map<String, GuildMediaProvider<? extends GuildResourceEntity>> mediaProviders;
+    private final DatabaseService databaseService;
 
     public Meme(Memer memer) {
-        DatabaseService databaseService = memer.getDatabaseService();
+        this.databaseService = memer.getDatabaseService();
         this.mediaProviders = Map.of(
                 "reddit", new GuildMediaProvider<>(memer.getRedditMediaProvider(), databaseService.getSubredditService()),
                 "imgur", new GuildMediaProvider<>(memer.getImgurMediaProvider(), databaseService.getImgurTagService())
@@ -115,7 +118,10 @@ public class Meme implements Command {
     }
 
     private Optional<ImageData> getMeme(long guildId, String site, String source) {
-        return mediaProviders.get(site).getMeme(guildId, source);
+        Optional<GuildDB> guildDBOptional = databaseService.getGuildService().get(guildId);
+        GuildDB guildDB = guildDBOptional.orElseThrow(() -> new BotRuntimeException("Could not found guild settings."));
+        boolean allowNSFW = guildDB.isNsfw();
+        return mediaProviders.get(site).getMeme(guildId, source, allowNSFW);
     }
 
     private MessageEmbed buildEmbedMessage(ImageData imageData) {
@@ -157,9 +163,9 @@ public class Meme implements Command {
             MediaProvider<ImageData> mediaProvider,
             GuildResourceService<T> resourceService) {
 
-        public Optional<ImageData> getMeme(long guildId, String source) {
+        public Optional<ImageData> getMeme(long guildId, String source, boolean allowNSFW) {
             if (containsSource(guildId, source)) {
-                return mediaProvider.getMeme(source);
+                return mediaProvider.getMeme(source, allowNSFW);
             } else {
                 return Optional.empty();
             }
