@@ -6,7 +6,9 @@ import com.fenrir.Memer.database.entities.GuildDB;
 import com.fenrir.Memer.database.entities.ImgurTagDB;
 import com.fenrir.Memer.database.entities.SubredditDB;
 import com.fenrir.Memer.database.managers.GuildResourceEntityManager;
+import com.fenrir.Memer.database.services.GuildResourceService;
 import com.fenrir.Memer.database.services.GuildService;
+import com.fenrir.Memer.database.services.SubredditService;
 import com.fenrir.Memer.exceptions.DatabaseException;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -58,18 +60,20 @@ public class GuildEventListener extends ListenerAdapter {
         GuildResourceEntityManager<SubredditDB> subredditManager = memer.getDatabaseService()
                 .getSubredditService()
                 .get(guildId);
+        int subredditLimit = subredditManager.getLimit();
         List<String> subreddits = settings.getSubreddits();
-        for (String subreddit: subreddits) {
-            SubredditDB subredditDB = new SubredditDB(subreddit, guildId);
-            System.out.println(subredditManager.add(subredditDB));
+        for (int i = 0; i < subreddits.size() && i < subredditLimit; i++) {
+            SubredditDB subredditDB = new SubredditDB(subreddits.get(i), guildId);
+            subredditManager.add(subredditDB);
         }
 
         GuildResourceEntityManager<ImgurTagDB> imgurManager = memer.getDatabaseService()
                 .getImgurTagService()
                 .get(guildId);
+        int imgurTagsLimit = imgurManager.getLimit();
         List<String> imgurTags = settings.getImgurTags();
-        for (String tag: imgurTags) {
-            ImgurTagDB imgurTagDB = new ImgurTagDB(tag, guildId);
+        for (int i = 0; i < imgurTags.size() && i < imgurTagsLimit; i++) {
+            ImgurTagDB imgurTagDB = new ImgurTagDB(imgurTags.get(i), guildId);
             imgurManager.add(imgurTagDB);
         }
     }
@@ -88,6 +92,11 @@ public class GuildEventListener extends ListenerAdapter {
             logger.error("Failed to remove guild from database on leave event. Guild id: {}", guildId);
         } finally {
             guildService.invalidate(guildId);
+
+            GuildResourceService<SubredditDB> subredditService = memer.getDatabaseService().getSubredditService();
+            GuildResourceService<ImgurTagDB> imgurTagService = memer.getDatabaseService().getImgurTagService();
+            subredditService.invalidate(guildId);
+            imgurTagService.invalidate(guildId);
         }
     }
 }
