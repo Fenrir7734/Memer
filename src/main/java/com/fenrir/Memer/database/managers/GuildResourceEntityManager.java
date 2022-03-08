@@ -5,6 +5,7 @@ import com.fenrir.Memer.database.entities.GuildResourceEntity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -109,8 +110,19 @@ public class GuildResourceEntityManager<T extends GuildResourceEntity> {
         }
     }
 
-    public long getGuildId() {
-        return guildId;
+    public boolean remove(String name) {
+        lock.writeLock().lock();
+        try {
+            Optional<T> toRemove = entities.stream()
+                    .filter(e -> e.getName().equals(name))
+                    .findFirst();
+            boolean result = toRemove.isPresent()
+                    && dao.delete(toRemove.get());
+            refresh();
+            return result;
+        } finally {
+            lock.writeLock().unlock();
+        }
     }
 
     private void refresh() {
@@ -122,5 +134,13 @@ public class GuildResourceEntityManager<T extends GuildResourceEntity> {
         } finally {
             lock.writeLock().unlock();
         }
+    }
+
+    public long getGuildId() {
+        return guildId;
+    }
+
+    public int getLimit() {
+        return limit;
     }
 }
