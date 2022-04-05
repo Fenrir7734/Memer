@@ -27,7 +27,7 @@ public class ImgurTagDAO implements GuildResourceDAO<ImgurTagDB> {
 
     public ImgurTagDAO(String DMLDirPath) throws IOException, SQLException, DatabaseException {
         if (!DatabaseMigrationService.checkIfTableExists(databaseDriver, TABLE_NAME)) {
-            String message = String.format("%s does not exists", TABLE_NAME);
+            String message = String.format("`%s` table does not exists", TABLE_NAME);
             logger.error(message);
             throw new DatabaseException(message);
         }
