@@ -173,6 +173,7 @@ You can use sample files, `settings_example.json` and `database_example.properti
 - from `settings.json` file:
   - `"token": "TOKEN"` - replace `TOKEN` by your Discord token
   - `"imgur_client_id": "CLIENT_ID"` - replace `CLIENT_ID` by your Imgur Client ID  
+
 Modifying other properties is optional. You can read about `settings.json` file [here](#Startup-bot-settings) and about properties in `database.properties` [here](https://github.com/brettwooldridge/HikariCP#gear-configuration-knobs-baby).
 
 ### Build from source
