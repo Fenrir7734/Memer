@@ -149,7 +149,7 @@ List of all available Imgur tags. Contrary to guild list of subreddits, guild ca
 ### Setup database
 1. Install MySQL Server: [MySQL Installation](https://dev.mysql.com/doc/refman/8.0/en/installing.html).
 2. Create database: [Database creation](https://dev.mysql.com/doc/refman/8.0/en/creating-database.html).
-3. Create database user: [CREATE USER Statement](https://dev.mysql.com/doc/refman/8.0/en/create-user.html), [GRANT Statement](https://dev.mysql.com/doc/refman/8.0/en/grant.html). Bot has a database migration feature - every 5 minute the application checks if there are new files in the `sql` directory. If application finds new files, it will try to read them and execute SQL from this file. If you do not intent to use this feature create user with only `CREATE`, `REFERENCES`, `INSERT`, `SELECT`, `UPDATE` and `DELETE` permissions and after application creates all necessary tables, revoke `CREATE` and `REFERENCES` permissions. Otherwise, create user with the previously mentioned permissions and any other permissions you deem necessary.
+3. Create database user: [CREATE USER Statement](https://dev.mysql.com/doc/refman/8.0/en/create-user.html), [GRANT Statement](https://dev.mysql.com/doc/refman/8.0/en/grant.html). Bot has a database migration feature - every 5 minute the application checks if there are new files in the `sql` directory. If application finds new files, it will try to read them and execute SQL from these files. If you do not intent to use this feature create user with only `CREATE`, `REFERENCES`, `INSERT`, `SELECT`, `UPDATE` and `DELETE` permissions and after application creates all necessary tables, revoke `CREATE` and `REFERENCES` permissions. Otherwise, create user with the previously mentioned permissions and any other permissions you deem necessary.
 
 ### Getting Imgur Client ID
 [Here](https://apidocs.imgur.com/#intro) you can read how to get Imgur Client ID.
@@ -167,12 +167,12 @@ For the bot to work, you need to provide two configuration files:
 2. `database.properties`
 You can use sample files, `settings_example.json` and `database_example.properties`. Just rename them and provide some necessary information: 
 - from `database.properties` file:
-  - `jdbcUrl=jdbc:mysql://localhost:3306/YOUR_DB_SCHEMA` - replace `YOUR_DB_SCHEMA` by name of yours previously created database.
+  - `jdbcUrl=jdbc:mysql://localhost:3306/YOUR_DB_SCHEMA` - replace `YOUR_DB_SCHEMA` by name of yours previously created database
   - `username=USERNAME` - replace `USERNAME` by name of your database user
   - `password=PASSWORD` - replace `PASSWORD` by password of your database user
 - from `settings.json` file:
   - `"token": "TOKEN"` - replace `TOKEN` by your Discord token
-  - `"imgur_client_id": "CLIENT_ID"` - replace `CLIENT_ID` by your Imgur Client ID
+  - `"imgur_client_id": "CLIENT_ID"` - replace `CLIENT_ID` by your Imgur Client ID  
 Modifying other properties is optional. You can read about `settings.json` file [here](#Startup-bot-settings) and about properties in `database.properties` [here](https://github.com/brettwooldridge/HikariCP#gear-configuration-knobs-baby).
 
 ### Build from source
@@ -187,7 +187,7 @@ $ mvn package
 ### Running
 Move sql directory and all configuration files into directory with bot .jar file. When you do this you are ready to run application. Open terminal in directory containing .jar file and execute command:
 ```
-$ java -jar JAR-FILE-NAME.jar
+$ java -jar JAR-WITH-DEPENDENCIES-FILE-NAME.jar
 ```
 
 ### Adding bot to guild
